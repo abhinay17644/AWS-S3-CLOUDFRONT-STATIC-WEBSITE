@@ -1,65 +1,81 @@
 # AWS S3 + CloudFront Static Website
 
+![AWS](https://img.shields.io/badge/AWS-S3%20%7C%20CloudFront-orange?logo=amazon-aws)
+![Hosting](https://img.shields.io/badge/Hosting-Static%20Website-blue)
+![Status](https://img.shields.io/badge/Status-Completed-success)
+
 ## 📌 Project Overview
 
-This project demonstrates how to deploy a **static website on Amazon S3** and distribute it globally using **Amazon CloudFront**.
+This project demonstrates how I deployed a **static HTML website on Amazon S3 and delivered it globally through Amazon CloudFront**.
 
-The website contains multiple HTML pages along with CSS, JavaScript, images, and web fonts. The website files are stored in an Amazon S3 bucket, while Amazon CloudFront is configured as the CDN layer to provide fast and secure access to the website.
+The website contains multiple HTML pages, CSS, JavaScript, images, and web fonts. The files are stored in an Amazon S3 bucket and served through a CloudFront distribution.
 
-This project also includes hands-on configuration of **CloudFront Origin Access Control (OAC)** to securely connect CloudFront with the S3 bucket.
+The project also demonstrates the configuration of **CloudFront Origin Access Control (OAC)** so that CloudFront can securely retrieve objects from the S3 bucket while direct public access to the bucket remains blocked.
+
+### 🌐 Live Website
+
+**CloudFront Distribution:**
+
+`https://d200lls7xh3st.cloudfront.net`
+
+> The CloudFront URL above is the distribution endpoint used for this project.
 
 ---
 
-# 🏗️ Architecture
+## 🏗️ Architecture
 
 ```text
-                         Users
-                           |
-                           |
-                           v
-                +----------------------+
-                |   Amazon CloudFront  |
-                |       CDN            |
-                |      HTTPS            |
-                +----------------------+
-                           |
-                           |
-                    Origin Access
-                      Control
-                           |
-                           v
-                +----------------------+
-                |      Amazon S3       |
-                |   Static Website     |
-                +----------------------+
-                           |
-              +------------+-------------+
-              |            |             |
-              v            v             v
-           HTML          CSS/JS      Images/Fonts
-Architecture Flow
-User sends a request to the CloudFront distribution.
-CloudFront receives the request.
-CloudFront checks its cache for the requested content.
-If the content is not available in cache, CloudFront requests it from Amazon S3.
-CloudFront uses Origin Access Control (OAC) to access the S3 bucket.
-S3 returns the requested website files.
-CloudFront delivers the content to the user over HTTPS.
-☁️ AWS Services Used
-AWS Service	Purpose
-Amazon S3	Stores static website files
-Amazon CloudFront	CDN and global content delivery
-CloudFront OAC	Secure access between CloudFront and S3
-AWS IAM	Access and permission management
-🌐 Project Website
-CloudFront Distribution
-https://d200lls7xh3st.cloudfront.net/
+                         Internet / Users
+                                |
+                                v
+                    +-----------------------+
+                    |   Amazon CloudFront   |
+                    |   Global CDN / HTTPS  |
+                    +-----------+-----------+
+                                |
+                         Origin Access
+                           Control (OAC)
+                                |
+                                v
+                    +-----------------------+
+                    |       Amazon S3       |
+                    |   Static Website Files|
+                    +-----------+-----------+
+                                |
+              +-----------------+-----------------+
+              |                 |                 |
+           HTML files        CSS / JS         Images / Fonts
+```
 
-The website is accessed through the CloudFront distribution instead of directly accessing the S3 bucket.
+### Request Flow
 
-📂 Project Structure
-AWS-S3-CLOUDFRONT-STATIC-WEBSITE/
-│
+1. A user opens the CloudFront URL.
+2. CloudFront receives the request from the user.
+3. CloudFront checks its cache for the requested object.
+4. If the object is not available in cache, CloudFront requests it from S3.
+5. CloudFront uses **Origin Access Control (OAC)** to authenticate with S3.
+6. S3 returns the requested object to CloudFront.
+7. CloudFront delivers the content to the user.
+
+---
+
+## ☁️ AWS Services Used
+
+| Service | Purpose |
+|---|---|
+| **Amazon S3** | Stores the static website files |
+| **Amazon CloudFront** | CDN used to distribute the website globally |
+| **CloudFront OAC** | Allows CloudFront to securely access the private S3 bucket |
+| **S3 Bucket Policy** | Grants `s3:GetObject` permission to the CloudFront distribution |
+
+---
+
+## 📂 Website Files
+
+The website contains the following main components:
+
+```text
+.
 ├── index.html
 ├── about.html
 ├── blog.html
@@ -69,8 +85,11 @@ AWS-S3-CLOUDFRONT-STATIC-WEBSITE/
 ├── singlepost.html
 │
 ├── css/
-│   ├── mobile.css
-│   └── style.css
+│   ├── style.css
+│   └── mobile.css
+│
+├── js/
+│   └── mobile.js
 │
 ├── fonts/
 │   ├── audiowide-regular-webfont.eot
@@ -78,522 +97,348 @@ AWS-S3-CLOUDFRONT-STATIC-WEBSITE/
 │   ├── audiowide-regular-webfont.ttf
 │   └── audiowide-regular-webfont.woff
 │
-├── images/
-│   ├── alien-life.jpg
-│   ├── astronaut.jpg
-│   ├── bg-about.jpg
-│   ├── bg-home.jpg
-│   ├── bg-transparent1.png
-│   ├── curious-rover.jpg
-│   ├── earth-satellite.jpg
-│   ├── finding-planet.jpg
-│   ├── galaxy.jpg
-│   ├── icons.png
-│   ├── logo.png
-│   ├── mars-rover.jpg
-│   ├── martianrover-journey.jpg
-│   ├── moon-landing.jpg
-│   ├── moon-satellite.jpg
-│   ├── new-satellitedish.jpg
-│   ├── project-image1.jpg
-│   ├── project-image2.jpg
-│   ├── project-image3.jpg
-│   ├── project-image4.jpg
-│   ├── satellite-dish.jpg
-│   ├── satellite.png
-│   ├── space-shuttle.png
-│   ├── space-station.jpg
-│   │
-│   └── mobile/
-│       ├── mobile-close.png
-│       ├── mobile-collapse.png
-│       ├── mobile-expand.png
-│       └── mobile-menu.png
-│
-└── js/
-    └── mobile.js
-🚀 Implementation
-Step 1: Prepare the Static Website
+└── images/
+    ├── alien-life.jpg
+    ├── astronaut.jpg
+    ├── bg-about.jpg
+    ├── bg-home.jpg
+    ├── curious-rover.jpg
+    ├── earth-satellite.jpg
+    ├── finding-planet.jpg
+    ├── galaxy.jpg
+    ├── logo.png
+    ├── mars-rover.jpg
+    ├── moon-landing.jpg
+    ├── satellite.png
+    └── other website images
+```
 
-The static website was prepared using:
+---
 
-HTML
-CSS
-JavaScript
-Images
-Web fonts
+# 🚀 Implementation Steps
 
-The main website entry point is:
+## Step 1 — Create the S3 Bucket
 
+I created an Amazon S3 bucket to store the static website files.
+
+Example bucket:
+
+```text
+abhi-s3-bucke
+```
+
+The website files were uploaded to the root of the bucket so that the HTML, CSS, JavaScript, image, and font paths could be resolved correctly.
+
+### Files uploaded to S3
+
+- HTML pages
+- CSS files
+- JavaScript files
+- Images
+- Web fonts
+
+📸 **S3 Bucket Objects**
+
+![S3 Bucket Objects](screenshots/01-s3-bucket-objects.png)
+
+---
+
+## Step 2 — Configure CloudFront
+
+I created an Amazon CloudFront distribution and configured the S3 bucket as the origin.
+
+CloudFront provides:
+
+- Global content delivery
+- HTTPS access
+- Edge caching
+- Reduced latency
+- Secure access to the S3 origin
+
+The CloudFront distribution created for this project is available at:
+
+```text
+https://d200lls7xh3st.cloudfront.net
+```
+
+📸 **CloudFront Distribution Settings**
+
+![CloudFront Distribution Settings](screenshots/04-cloudfront-distribution-settings.png)
+
+---
+
+## Step 3 — Configure Origin Access Control (OAC)
+
+For security, the S3 bucket is not directly exposed to the public internet.
+
+CloudFront uses **Origin Access Control (OAC)** to access objects stored in S3.
+
+The bucket policy allows the CloudFront service principal to perform:
+
+```text
+s3:GetObject
+```
+
+for objects inside the bucket.
+
+The policy is restricted to the specific CloudFront distribution using the AWS source ARN condition.
+
+📸 **S3 Bucket Policy with CloudFront OAC**
+
+![S3 Bucket Policy](screenshots/03-s3-bucket-policy-oac.png)
+
+---
+
+## Step 4 — Configure Default Root Object
+
+The main page of the website is:
+
+```text
 index.html
+```
 
-Additional pages include:
+CloudFront should use `index.html` as the default root object so that a request to:
 
-about.html
-blog.html
-contact.html
-proj1.html
-projects.html
-singlepost.html
-
-The website assets were organized into separate directories:
-
-css/
-js/
-images/
-fonts/
-
-Maintaining the correct directory structure is important because the HTML files reference these assets using relative paths.
-
-For example:
-
-<link rel="stylesheet" href="css/style.css">
-Step 2: Create Amazon S3 Bucket
-
-An Amazon S3 bucket was created to store the static website files.
-
-The website files were uploaded into the S3 bucket.
-
-The bucket structure looks like:
-
-S3 Bucket
-│
-├── index.html
-├── about.html
-├── blog.html
-├── contact.html
-├── projects.html
-│
-├── css/
-├── js/
-├── images/
-└── fonts/
-S3 Configuration
-
-The bucket was configured to store the static website content.
-
-The index.html file was placed in the root of the bucket.
-
-Step 3: Upload Website Files
-
-The complete website files were uploaded to the S3 bucket.
-
-The following files and folders were uploaded:
-
-index.html
-about.html
-blog.html
-contact.html
-proj1.html
-projects.html
-singlepost.html
-
-css/
-js/
-images/
-fonts/
-
-After uploading, the S3 bucket contained the complete website structure.
-
-Step 4: Configure CloudFront
-
-An Amazon CloudFront distribution was created.
-
-The S3 bucket was configured as the CloudFront origin.
-
-CloudFront Configuration
-Origin:
-Amazon S3 Bucket
-
-Default Root Object:
-index.html
-
-Protocol:
-HTTPS
-
-The CloudFront distribution provides the public URL:
-
+```text
 https://d200lls7xh3st.cloudfront.net/
-Step 5: Configure Origin Access Control (OAC)
+```
 
-CloudFront Origin Access Control was configured to securely access the S3 bucket.
+loads the homepage.
 
-The request flow is:
+---
 
-User
-  |
-  v
+## Step 5 — Troubleshooting AccessDenied
+
+During the initial configuration, I received an S3 `AccessDenied` error when accessing the CloudFront distribution.
+
+📸 **Initial AccessDenied Error**
+
+![CloudFront Access Denied](screenshots/02-cloudfront-access-denied.png)
+
+### Cause
+
+The CloudFront distribution did not initially have the required permission to retrieve objects from the S3 bucket.
+
+### Resolution
+
+I configured the S3 bucket policy to allow the CloudFront distribution to access the objects using Origin Access Control.
+
+After correcting the permissions and updating CloudFront, the website became accessible through the CloudFront domain.
+
+---
+
+# 🖥️ Website Validation
+
+After completing the S3 and CloudFront configuration, I tested the different pages of the website through the CloudFront URL.
+
+## Home Page
+
+![Home Page](screenshots/05-home-page.png)
+
+The homepage successfully loads the background images, navigation menu, text, and other website content.
+
+## About Page
+
+![About Page](screenshots/06-about-page.png)
+
+The About page loads successfully through CloudFront with its associated CSS and images.
+
+## Contact Page
+
+![Contact Page](screenshots/07-contact-page.png)
+
+The Contact page loads successfully with the page layout and form elements.
+
+## Blog Page
+
+![Blog Page](screenshots/08-blog-page.png)
+
+The Blog page also loads successfully through the CloudFront distribution.
+
+---
+
+# 🔐 Security Configuration
+
+The project uses the following security approach:
+
+- S3 bucket public access is blocked.
+- CloudFront is used as the public entry point.
+- CloudFront Origin Access Control is configured.
+- S3 bucket policy grants CloudFront permission to read objects.
+- Users access the website through the CloudFront distribution rather than directly accessing the S3 bucket.
+
+### Security Model
+
+```text
+Public User
+    |
+    v
 CloudFront
-  |
-  | OAC
-  |
-  v
-S3 Bucket
+    |
+    | OAC authenticated request
+    v
+Private S3 Bucket
+```
 
-OAC allows CloudFront to retrieve objects from the S3 bucket without requiring the S3 objects to be publicly accessible.
+---
 
-The S3 bucket policy was configured to allow the CloudFront distribution to retrieve objects.
+# 🧪 Testing Performed
 
-Step 6: Configure Default Root Object
+The following tests were performed after deployment:
 
-The CloudFront distribution was configured with:
+- [x] S3 objects uploaded successfully
+- [x] CloudFront distribution created
+- [x] S3 configured as CloudFront origin
+- [x] Origin Access Control configured
+- [x] S3 bucket policy configured
+- [x] `index.html` tested through CloudFront
+- [x] CSS files tested
+- [x] JavaScript files tested
+- [x] Images tested
+- [x] Multiple HTML pages tested
+- [x] CloudFront URL tested from browser
+- [x] Initial `AccessDenied` issue identified and resolved
 
-Default Root Object:
+---
+
+# 📚 What I Learned
+
+Through this project, I gained practical experience with:
+
+### Amazon S3
+
+- Creating S3 buckets
+- Uploading static website files
+- Organizing website assets
+- Understanding S3 object access
+- Understanding Block Public Access
+- Working with S3 bucket policies
+
+### Amazon CloudFront
+
+- Creating a CloudFront distribution
+- Configuring an S3 origin
+- Understanding CDN and edge caching
+- Configuring Origin Access Control
+- Configuring the default root object
+- Testing CloudFront distributions
+- Troubleshooting `AccessDenied` errors
+
+### AWS Security
+
+- Understanding why public S3 access should not be required when using CloudFront OAC
+- Using IAM-style resource policies to control S3 access
+- Restricting S3 access to a specific CloudFront distribution
+
+---
+
+# 🛠️ Troubleshooting Notes
+
+## Issue 1 — AccessDenied
+
+**Symptom:**
+
+```text
+<Code>AccessDenied</Code>
+<Message>Access Denied</Message>
+```
+
+**Solution:**
+
+Configured the S3 bucket policy to allow the CloudFront distribution to perform `s3:GetObject` through Origin Access Control.
+
+---
+
+## Issue 2 — Website Loads Without CSS
+
+**Symptom:**
+
+The HTML page opened, but the CSS/images were missing.
+
+**Checks performed:**
+
+1. Confirmed the CSS file existed in S3.
+2. Confirmed the folder structure matched the paths used by the HTML files.
+3. Checked browser requests for missing objects.
+4. Confirmed CloudFront could retrieve the required objects.
+5. Invalidated CloudFront cache after configuration/file changes.
+
+Example:
+
+```text
+/css/style.css
+/css/mobile.css
+/js/mobile.js
+/images/bg-home.jpg
+```
+
+---
+
+## Issue 3 — Homepage Not Loading
+
+The homepage depends on:
+
+```text
 index.html
+```
 
-This allows the user to open:
+The CloudFront distribution was configured to use `index.html` as the default root object.
 
-https://d200lls7xh3st.cloudfront.net/
+---
 
-instead of manually entering:
+# 🔄 Future Improvements
 
-https://d200lls7xh3st.cloudfront.net/index.html
+Possible improvements for this project include:
 
-CloudFront automatically serves:
+- Add a custom domain using Route 53
+- Add an SSL/TLS certificate using AWS Certificate Manager
+- Configure HTTPS with a custom domain
+- Add CloudFront custom error pages
+- Add CloudFront cache policies
+- Add response headers policies
+- Add AWS WAF for additional web protection
+- Automate deployment using GitHub Actions
+- Add CI/CD from GitHub to S3 and CloudFront
+- Add CloudWatch monitoring and alarms
+- Configure logging for CloudFront
 
-index.html
+---
 
-when the root URL is requested.
+# 📌 Project Summary
 
-Step 7: Test the Website
+This project demonstrates a complete AWS static website hosting workflow:
 
-The CloudFront URL was tested after completing the configuration.
-
-Website URL
-https://d200lls7xh3st.cloudfront.net/
-
-The following components were tested:
-
-Homepage
-HTML pages
-CSS
-JavaScript
-Images
-Fonts
-Website navigation
-🔧 Troubleshooting
-
-During the deployment, some issues were encountered and resolved.
-
-Issue 1: AccessDenied Error
-
-Initially, accessing the website resulted in an:
-
-AccessDenied
-
-error.
-
-Cause
-
-CloudFront did not have the required permission to retrieve the objects from the S3 bucket.
-
-Resolution
-
-The CloudFront origin and Origin Access Control configuration were checked.
-
-The S3 bucket policy was configured to allow CloudFront to retrieve objects.
-
-The request flow became:
-
-CloudFront
+```text
+Website Files
+     |
+     v
+Amazon S3
+     |
+     | S3 Origin
+     v
+Amazon CloudFront
      |
      | OAC
      v
-S3 Bucket
+Secure S3 Object Access
      |
      v
-Website Files
-Issue 2: index.html Not Loading
+Global Website Delivery
+```
 
-The CloudFront URL was not automatically displaying the homepage.
+The project helped me understand how **Amazon S3, CloudFront, Origin Access Control, S3 bucket policies, caching, and static website assets work together in a real AWS deployment.**
 
-Cause
+---
 
-The CloudFront distribution did not have the correct default root object configured.
+## 👨‍💻 Author
 
-Resolution
+**Abhinay Kumar**
 
-The CloudFront distribution was configured with:
+AWS Cloud / Infrastructure Learning Projects
 
-Default Root Object:
-index.html
+---
 
-After the configuration, opening:
+## ⭐ If you find this project useful
 
-https://d200lls7xh3st.cloudfront.net/
+Feel free to explore the repository and review the AWS configuration and deployment screenshots.
 
-loads:
-
-index.html
-
-automatically.
-
-Issue 3: CSS Not Loading
-
-The website was initially displayed without proper styling.
-
-Cause
-
-The CSS file was not being retrieved correctly through the CloudFront/S3 configuration.
-
-The website uses:
-
-css/style.css
-
-and:
-
-css/mobile.css
-Resolution
-
-The S3 object structure was checked to ensure the CSS files existed in the correct location.
-
-The correct structure is:
-
-S3 Bucket
-│
-├── index.html
-│
-└── css/
-    ├── style.css
-    └── mobile.css
-
-The HTML references the stylesheet using:
-
-<link rel="stylesheet" href="css/style.css">
-Issue 4: CloudFront Cache
-
-After making configuration or website changes, CloudFront could continue serving previously cached content.
-
-Resolution
-
-A CloudFront invalidation was created using:
-
-/*
-
-This forces CloudFront to request updated content from the origin when required.
-
-🔄 Complete Request Flow
-
-The complete website request flow is:
-
-                     User
-                       |
-                       |
-                       v
-              CloudFront URL
-                       |
-                       v
-              CloudFront Edge
-                       |
-                       |
-                  Cache Check
-                  /          \
-                Hit          Miss
-                |              |
-                |              v
-                |       Origin Request
-                |              |
-                |              v
-                |         OAC Authentication
-                |              |
-                |              v
-                |          S3 Bucket
-                |              |
-                |              v
-                |        Website Files
-                |              |
-                +--------------+
-                       |
-                       v
-                    User
-📸 Screenshots
-
-Screenshots can be added to document the implementation.
-
-1. S3 Bucket
-
-Screenshot showing the uploaded website files.
-
-screenshots/s3-bucket.png
-2. S3 Website Files
-
-Screenshot showing:
-
-index.html
-css/
-images/
-fonts/
-js/
-screenshots/s3-files.png
-3. CloudFront Distribution
-
-Screenshot showing the CloudFront distribution.
-
-screenshots/cloudfront-distribution.png
-4. CloudFront Origin
-
-Screenshot showing the S3 origin and OAC configuration.
-
-screenshots/cloudfront-origin.png
-5. CloudFront Default Root Object
-
-Screenshot showing:
-
-index.html
-screenshots/default-root-object.png
-6. Working Website
-
-Screenshot showing the website successfully loading through CloudFront.
-
-screenshots/website.png
-🔐 Security Considerations
-
-The project uses CloudFront as the public delivery layer and S3 as the origin.
-
-Security practices used in this project include:
-
-CloudFront Origin Access Control
-S3 bucket policy
-HTTPS through CloudFront
-Controlled access between CloudFront and S3
-No AWS credentials stored in the GitHub repository
-
-AWS access keys, secret keys, passwords, and other sensitive credentials should never be committed to GitHub.
-
-📚 Key Learnings
-
-Through this project, I gained hands-on experience with:
-
-Amazon S3
-Creating an S3 bucket
-Uploading static website files
-Organizing website objects
-Understanding S3 permissions
-Understanding S3 bucket policies
-Amazon CloudFront
-Creating a CloudFront distribution
-Configuring an S3 origin
-Configuring the default root object
-Understanding CDN caching
-Creating cache invalidations
-Accessing a website through CloudFront
-Origin Access Control
-Understanding CloudFront OAC
-Connecting CloudFront securely to S3
-Configuring S3 permissions for CloudFront
-Troubleshooting
-Troubleshooting AccessDenied
-Troubleshooting missing index.html
-Troubleshooting CSS loading issues
-Troubleshooting CloudFront cached content
-Verifying website asset paths
-💡 Future Improvements
-
-The project can be extended with:
-
-Custom domain using Amazon Route 53
-SSL certificate using AWS Certificate Manager
-AWS WAF
-CloudWatch monitoring
-CloudFront access logging
-GitHub Actions CI/CD
-Automatic deployment from GitHub to S3
-Infrastructure as Code using Terraform
-Infrastructure as Code using AWS CloudFormation
-Future Architecture
-Developer
-    |
-    v
-GitHub
-    |
-    | CI/CD
-    v
-Amazon S3
-    |
-    v
-CloudFront
-    |
-    v
-Route 53
-    |
-    v
-Custom Domain
-    |
-    v
-Users
-🛠️ Technologies Used
-Frontend
-HTML5
-CSS3
-JavaScript
-AWS
-Amazon S3
-Amazon CloudFront
-CloudFront Origin Access Control
-AWS IAM
-Version Control
-Git
-GitHub
-📊 Project Summary
-Component	Implementation
-Website Type	Static Website
-Frontend	HTML, CSS, JavaScript
-Storage	Amazon S3
-CDN	Amazon CloudFront
-Origin Security	CloudFront OAC
-Default Page	index.html
-Protocol	HTTPS
-Version Control	GitHub
-Deployment	AWS S3 + CloudFront
-🎯 Conclusion
-
-This project demonstrates a complete deployment of a static website using Amazon S3 and Amazon CloudFront.
-
-The project started with a static HTML/CSS/JavaScript website and was deployed to Amazon S3. CloudFront was then configured as the CDN layer with Origin Access Control to securely retrieve content from S3.
-
-During the implementation, practical troubleshooting was performed for:
-
-S3 AccessDenied
-CloudFront origin configuration
-Default root object
-Missing CSS
-Static asset paths
-CloudFront caching
-
-The final solution provides a simple, scalable, and secure foundation for hosting a static website on AWS.
-
-👨‍💻 Author
-
-Abhinay Kumar
-
-GitHub:
-https://github.com/abhinay17644
-
-📌 Project Status
-
-Completed ✅
-
-Amazon S3
-     |
-     | Secure Origin
-     v
-CloudFront OAC
-     |
-     v
-HTTPS Website
-     |
-     v
-Users
-
-This version is much closer to the **project-documentation style** we used for your WordPress/LAMP project: it documents **your actual implementation and troubleshooting**, rather than just describing what S3 and CloudFront are. 
-
-### What I recommend you do now
-
-Since your GitHub repository already has the website files, go to:
-
-**Add file → Create new file**
-
-Name:
-
-```text
-README.md
